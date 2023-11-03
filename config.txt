@@ -1,4 +1,8 @@
 {
-	"client": "username", 
-	"password": "password"
+	"host": "ws://kdancy.ru:1727/ws",
+	"gosumemory_url": "http://localhost:24050/json",
+	"credentials": {
+		"client": "twitch_username", 
+		"password": "password"
+	}
 }

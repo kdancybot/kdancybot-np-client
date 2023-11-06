@@ -1,11 +1,9 @@
 package main
 
 import (
-    "log"
     "github.com/gorilla/websocket"
     "os"
     "encoding/json"
-    "net/url"
 )
 
 type Config struct {
@@ -29,69 +27,45 @@ func LoadConfiguration(file string) (Config, error) {
     return config, err
 }
 
-func handle_command(command []byte, url string) ([]byte, error) {
-    str_command := string(command)
-    if (str_command == "np") {
+func handle_command(command string, url string) ([]byte, error) {
+    if (command == "np") {
         return getDataFromGosumemory(url)
     }
     return nil, nil
 }
 
-func main() {
-    config, err := LoadConfiguration("config.txt")
-    if err != nil {
-        log.Fatal("Error reading config file:", err)
-        return
-    }
-
-    // Parse the server URL
-    u, err := url.Parse(config.Host)
-    if err != nil {
-        log.Fatal("Error parsing server URL:", err)
-        return
-    }
-
+func connection_handler(url string, gosumemory_url string, credentials []byte) (error) {
     // Establish a WebSocket connection
-    conn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+    conn, _, err := websocket.DefaultDialer.Dial(url, nil)
     if err != nil {
-        log.Fatal("Error establishing WebSocket connection:", err)
-        return
+        return err
     }
     defer conn.Close()
-
-    // Define your authentication payload (username and password)
-    credentials, err := json.Marshal(config.Credentials)
 
     // Send the authentication payload to the server
     err = conn.WriteMessage(websocket.TextMessage, credentials)
     if err != nil {
-        log.Fatal("Error sending authentication message:", err)
-        return
+        return err
     }
 
     // Handle incoming WebSocket messages
     for {
         _, message, err := conn.ReadMessage()
         if err != nil {
-            log.Println("Error reading WebSocket message:", err)
-            return
+            return err
         }
-        // Process the received message
-        log.Printf("Received message: %s", message)
 
-        response, err := handle_command(message, config.GosumemoryURL)
+        // Process the received message
+        response, err := handle_command(string(message), gosumemory_url)
         if err != nil {
-            log.Println("Error getting getting new data:", err)
-            return
+            return err
         }
         
-        if response == nil {
-            continue
-        }
-        err = conn.WriteMessage(websocket.TextMessage, response)
-        if err != nil {
-            log.Fatal("Error sending response:", err)
-            return
+        if response != nil {
+            err = conn.WriteMessage(websocket.TextMessage, response)
+            if err != nil {
+                return err
+            }
         }
     }
 }

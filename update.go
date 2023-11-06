@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -16,7 +15,7 @@ const version = "0.0.0"
 
 // SelfUpdate updates the application
 func SelfUpdate() {
-	fmt.Println("Checking Updates... (can take some time if you have bad routing to GitHub)")
+	log.Println("Checking Updates... (can take some time if you have bad routing to GitHub)")
 	name, err := os.Executable()
 	if err != nil {
 		log.Fatalln(err)

@@ -2,12 +2,25 @@ package main
 
 import (
     "log"
+    "os"
     "encoding/json"
     "net/url"
     "time"
 )
 
+func ChangeLogDestinationToFile() {
+	f, err := os.OpenFile("client.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0664)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	log.SetOutput(f)
+	
+	// Not explicitly closing file is bad, 
+	// but it shouldn't become a problem with only one config file opened
+}
+
 func main() {
+	ChangeLogDestinationToFile()
     SelfUpdate()
 
     config, err := LoadConfiguration("config.txt")

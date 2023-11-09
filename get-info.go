@@ -3,12 +3,16 @@ package main
 import (
     "net/http"
     "io/ioutil"
-    // "log"
-    // "encoding/json"
+    "time"
+    "log"
 )
 
 func getDataFromGosumemory(url string) ([]byte, error) {
-    response, err := http.Get(url)
+    client := http.Client{
+        Timeout: time.Millisecond * 500,
+    }
+    response, err := client.Get(url)
+    // response, err := http.Get(url)
     if err != nil {
         return nil, err
     }
@@ -19,6 +23,7 @@ func getDataFromGosumemory(url string) ([]byte, error) {
         return nil, err
     }
 
+    log.Print("Successfully read data from gosumemory")
     return data, nil
 }
 

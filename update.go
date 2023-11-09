@@ -11,11 +11,11 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-const version = "0.0.1"
+const version = "0.0.2"
 
-// SelfUpdate updates the application
+// SelfUpdate updates the application (thx blackshark for this function <3)
 func SelfUpdate() {
-	log.Println("Checking Updates... (can take some time if you have bad routing to GitHub)")
+	log.Println("Checking Updates...")
 	name, err := os.Executable()
 	if err != nil {
 		log.Fatalln(err)

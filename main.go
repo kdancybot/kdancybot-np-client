@@ -6,6 +6,7 @@ import (
     "encoding/json"
     "net/url"
     "time"
+    "strings"
 )
 
 func ChangeLogDestinationToFile() {
@@ -43,12 +44,16 @@ func main() {
         return
     }
 
-    seconds_wait := 2
+    seconds_wait := 5 // This is fine until I implement good reconnection tactic
     for true {
         err = connection_handler(u.String(), config.GosumemoryURL, credentials)
         log.Printf("Error happened during connection handling: %s", err)
+        if (strings.HasPrefix(err.Error(), "auth:")) {
+            log.Printf("Exiting...")
+            return
+        }
         log.Printf("Reconnecting in %d %s", seconds_wait, "seconds")
         time.Sleep(time.Duration(seconds_wait) * time.Second)
-        seconds_wait *= 2
+        // seconds_wait *= 2
     }
 }

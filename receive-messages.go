@@ -4,6 +4,7 @@ import (
     "github.com/gorilla/websocket"
     "os"
     "encoding/json"
+    "fmt"
 )
 
 type Config struct {
@@ -13,6 +14,37 @@ type Config struct {
     } `json:"credentials"`
     Host string `json:"host"`
     GosumemoryURL string `json:"gosumemory_url"`
+}
+
+type AuthResponse struct {
+    Error struct {
+        Num int `json:"num"`
+        Str string `json:"str"`
+    } `json:"error"`
+}
+
+type ErrorResponse struct {
+    Error string `json:"error"`
+}
+
+type AuthError struct {
+    Message string
+}
+
+func (e AuthError) Error() string {
+    return fmt.Sprintf("auth: %v", e.Message)
+}
+
+func CheckAuthResponse(message []byte) (error) {
+    var json_data AuthResponse
+    err := json.Unmarshal(message, &json_data)
+    if err != nil {
+        return err
+    }
+    if (json_data.Error.Num != 0) {
+        return AuthError{json_data.Error.Str}
+    }
+    return nil
 }
 
 func LoadConfiguration(file string) (Config, error) {
@@ -48,6 +80,16 @@ func connection_handler(url string, gosumemory_url string, credentials []byte) (
         return err
     }
 
+    _, message, err := conn.ReadMessage()
+    if err != nil {
+        return err
+    }
+
+    err = CheckAuthResponse(message)
+    if err != nil {
+        return err
+    }
+
     // Handle incoming WebSocket messages
     for {
         _, message, err := conn.ReadMessage()
@@ -57,7 +99,15 @@ func connection_handler(url string, gosumemory_url string, credentials []byte) (
 
         // Process the received message
         response, err := handle_command(string(message), gosumemory_url)
+
+        // This currently disconnects client from server, not sure if that's desirable outcome
         if err != nil {
+            error_response := &ErrorResponse{err.Error()}
+            bytes_response, _ := json.Marshal(error_response)
+            conn.WriteMessage(
+                websocket.TextMessage,
+                bytes_response,
+            )
             return err
         }
         

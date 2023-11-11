@@ -123,6 +123,7 @@ func connection_handler(url string, osu_urls []string, credentials []byte) (erro
         }
         
         if response != nil {
+            log.Print("writing", response, "to server")
             err = conn.WriteMessage(websocket.TextMessage, response)
             if err != nil {
                 return err

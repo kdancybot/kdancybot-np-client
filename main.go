@@ -29,8 +29,7 @@ func main() {
         log.Fatal("Error reading config file:", err)
         return
     }
-    log.Print(config)
-
+    
     // Parse the server URL
     u, err := url.Parse(config.Host)
     if err != nil {

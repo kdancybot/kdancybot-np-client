@@ -29,6 +29,7 @@ func main() {
         log.Fatal("Error reading config file:", err)
         return
     }
+    log.Print(config)
 
     // Parse the server URL
     u, err := url.Parse(config.Host)
@@ -44,9 +45,11 @@ func main() {
         return
     }
 
+    osu_urls := []string{config.StreamCompanionURL, config.GosumemoryURL}
+
     seconds_wait := 5 // This is fine until I implement good reconnection tactic
     for true {
-        err = connection_handler(u.String(), config.GosumemoryURL, credentials)
+        err = connection_handler(u.String(), osu_urls, credentials)
         log.Printf("Error happened during connection handling: %s", err)
         if (strings.HasPrefix(err.Error(), "auth:")) {
             log.Printf("Exiting...")

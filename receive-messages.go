@@ -14,6 +14,7 @@ type Config struct {
     } `json:"credentials"`
     Host string `json:"host"`
     GosumemoryURL string `json:"gosumemory_url"`
+    StreamCompanionURL string `json:"stream_companion_url"`
 }
 
 type AuthResponse struct {
@@ -47,6 +48,15 @@ func CheckAuthResponse(message []byte) (error) {
     return nil
 }
 
+func SetDefaultValuesToConfiguration(config *Config) {
+    if config.StreamCompanionURL == "" {
+        config.StreamCompanionURL = "http://localhost:20727/json"
+    }
+    if config.GosumemoryURL == "" {
+        config.GosumemoryURL = "http://localhost:24050/json"
+    }
+}
+
 func LoadConfiguration(file string) (Config, error) {
     var config Config
     configFile, err := os.Open(file)
@@ -56,17 +66,18 @@ func LoadConfiguration(file string) (Config, error) {
     }
     jsonParser := json.NewDecoder(configFile)
     err = jsonParser.Decode(&config)
+    SetDefaultValuesToConfiguration(&config)
     return config, err
 }
 
-func handle_command(command string, url string) ([]byte, error) {
+func handle_command(command string, urls []string) ([]byte, error) {
     if (command == "np") {
-        return getDataFromGosumemory(url)
+        return getOsuData(urls)
     }
     return nil, nil
 }
 
-func connection_handler(url string, gosumemory_url string, credentials []byte) (error) {
+func connection_handler(url string, osu_urls []string, credentials []byte) (error) {
     // Establish a WebSocket connection
     conn, _, err := websocket.DefaultDialer.Dial(url, nil)
     if err != nil {
@@ -98,7 +109,7 @@ func connection_handler(url string, gosumemory_url string, credentials []byte) (
         }
 
         // Process the received message
-        response, err := handle_command(string(message), gosumemory_url)
+        response, err := handle_command(string(message), osu_urls)
 
         // This currently disconnects client from server, not sure if that's desirable outcome
         if err != nil {

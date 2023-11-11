@@ -5,9 +5,15 @@ import (
     "io/ioutil"
     "time"
     "log"
+    // "sync"
 )
 
-func getDataFromGosumemory(url string) ([]byte, error) {
+// type OsuDataResponse struct {
+
+// }
+
+// func getDataFromUrl(url string, wg *sync.WaitGroup, out chan<- bytes[]) ([]byte, error) {
+func getDataFromUrl(url string) ([]byte, error) {
     client := http.Client{
         Timeout: time.Millisecond * 500,
     }
@@ -23,8 +29,31 @@ func getDataFromGosumemory(url string) ([]byte, error) {
         return nil, err
     }
 
-    log.Print("Successfully read data from gosumemory")
+    log.Print("Successfully read data from ", url)
     return data, nil
+}
+
+func getOsuData(urls []string) ([]byte, error) {
+    var err error
+    for _, url := range urls {
+        data, err := getDataFromUrl(url)
+        if err == nil {
+            return data, nil
+        }
+        else {
+            log.Print(err)
+        }
+    }
+    return nil, err
+
+    // var wg sync.WaitGroup
+    // wg.add(1)
+    // bytes_chan := make(chan bytes[], len(urls))
+    // for i, url := range urls {
+    //     go getDataFromUrl(url, wg, bytes_chan)
+    // }
+    // out := <-bytes_chan
+    // return out, 
 }
 
 // func getData()([]byte, error) {

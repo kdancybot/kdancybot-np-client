@@ -48,6 +48,7 @@ func CheckAuthResponse(message []byte) (error) {
     return nil
 }
 
+// TODO: set default server Url here too
 func SetDefaultValuesToConfiguration(config *Config) {
     if config.StreamCompanionURL == "" {
         config.StreamCompanionURL = "http://localhost:20727/json"
@@ -72,7 +73,7 @@ func LoadConfiguration(file string) (Config, error) {
 
 func handle_command(command string, urls []string) ([]byte, error) {
     if (command == "np") {
-        return getOsuData(urls)
+        return getOsuData(urls), nil
     }
     return nil, nil
 }

@@ -5,6 +5,7 @@ import (
     "io/ioutil"
     "time"
     "log"
+    "encoding/json"
     // "sync"
 )
 
@@ -36,17 +37,23 @@ func getDataFromUrl(url string) ([]byte, error) {
 
 
 // TODO: Rewrite to use goroutines
-func getOsuData(urls []string) ([]byte, error) {
-    var err error
+func getOsuData(urls []string) ([]byte) {
+    var errors []string
     for _, url := range urls {
         data, err := getDataFromUrl(url)
         if err == nil {
-            return data, nil
+            return data
         } else {
             log.Print(err)
+            errors = append(errors, err.Error())
         }
     }
-    return nil, err
+    errors_map := map[string]interface{}{}
+    errors_map["error"] = errors
+    errors_json, _ := json.Marshal(errors_map)
+
+    log.Print(string(errors_json))
+    return errors_json
 }
 
     // var wg sync.WaitGroup

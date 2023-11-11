@@ -11,7 +11,7 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-const version = "0.0.3"
+const version = "0.0.4"
 
 // SelfUpdate updates the application (thx blackshark for this function <3)
 func SelfUpdate() {

@@ -14,8 +14,9 @@ import (
 
 // func getDataFromUrl(url string, wg *sync.WaitGroup, out chan<- bytes[]) ([]byte, error) {
 func getDataFromUrl(url string) ([]byte, error) {
+    // this is kinda bad because for gosumemory delay will be at the very least 2s
     client := http.Client{
-        Timeout: time.Millisecond * 500,
+        Timeout: time.Millisecond * 2000, // this will almost never timeout
     }
     response, err := client.Get(url)
     // response, err := http.Get(url)
@@ -33,18 +34,20 @@ func getDataFromUrl(url string) ([]byte, error) {
     return data, nil
 }
 
+
+// TODO: Rewrite to use goroutines
 func getOsuData(urls []string) ([]byte, error) {
     var err error
     for _, url := range urls {
         data, err := getDataFromUrl(url)
         if err == nil {
             return data, nil
-        }
-        else {
+        } else {
             log.Print(err)
         }
     }
     return nil, err
+}
 
     // var wg sync.WaitGroup
     // wg.add(1)
@@ -54,7 +57,6 @@ func getOsuData(urls []string) ([]byte, error) {
     // }
     // out := <-bytes_chan
     // return out, 
-}
 
 // func getData()([]byte, error) {
 //     jsonData, err := getDataFromGosumemory()

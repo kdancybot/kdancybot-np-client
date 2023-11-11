@@ -5,6 +5,7 @@ import (
     "os"
     "encoding/json"
     "fmt"
+    "log"
 )
 
 type Config struct {

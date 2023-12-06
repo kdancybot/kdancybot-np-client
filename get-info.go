@@ -366,10 +366,6 @@ func getDataFromUrl(url string) ([]byte, error) {
 }
 
 func addMapPathSC(jsonBytes []byte) ([]byte, error) {
-	// For some reason StreamCompanion adds UTF-8 BOM
-	// which is not defined in JSON standard
-	jsonBytes = bytes.TrimPrefix(jsonBytes, []byte("\xef\xbb\xbf"))
-
 	var osuData StreamCompanionResponse
 	if err := json.Unmarshal(jsonBytes, &osuData); err != nil {
 		return jsonBytes, errors.New("Error decoding JSON: " + err.Error())
@@ -414,6 +410,10 @@ func addMapPathGM(jsonBytes []byte) ([]byte, error) {
 }
 
 func OsuDataWithMapData(osuData []byte) []byte {
+	// For some reason StreamCompanion adds UTF-8 BOM
+	// which is not defined in JSON standard
+	osuData = bytes.TrimPrefix(osuData, []byte("\xef\xbb\xbf"))
+
 	if fullData, err := addMapPathSC(osuData); err == nil {
 		return fullData
 	} else {

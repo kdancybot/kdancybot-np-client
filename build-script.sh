@@ -4,6 +4,9 @@ target=kdancybot-np-client
 	
 platforms=("windows/amd64" "windows/386" "linux/amd64" "linux/386")
 
+go install github.com/tc-hib/go-winres@latest
+go-winres make
+
 mkdir -p build
 
 for platform in "${platforms[@]}"

@@ -1,0 +1,24 @@
+main
+gosumemory
+gosumemory.exe
+gameoverlay
+static
+osu!.db
+config.ini
+__debug_bin
+gosumemory.exe.manifest
+gosumemory.syso
+res.ico
+/.idea/gosumemory.iml
+/.idea/modules.xml
+/.idea/vcs.xml
+# Default ignored files
+/shelf/
+/workspace.xml
+# Datasource local storage ignored files
+/../../../../../../../../../:\Users\BlackShark\go\src\github.com\l3lackShark\gosumemory\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+gameoverlay.zip
+*.exe

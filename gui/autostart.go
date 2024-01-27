@@ -10,6 +10,14 @@ import (
 
 var app *autostart.App
 
+func SetUpApp() {
+	app = &autostart.App{
+		Name:        "kdancybot",
+                DisplayName: "NPClient",
+                Exec:        []string{GetRealPath()},
+        }
+}
+
 func GetShortcutPath() string {
 	// Get user's home dir to enable autostart
 	homeDir, err := os.UserHomeDir()

@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"os"
 
-	"github.com/emersion/go-autostart"
 	"github.com/getlantern/systray"
 )
 
@@ -13,14 +12,8 @@ import (
 //go:embed icon.ico
 var icon []byte
 
-var app *autostart.App
-
 func Start() {
-	app := &autostart.App{
-		Name:        "kdancybot",
-		DisplayName: "NPClient",
-		Exec:        []string{GetRealPath()},
-	}
+	SetUpApp()
 	systray.Run(onReady, nil)
 }
 

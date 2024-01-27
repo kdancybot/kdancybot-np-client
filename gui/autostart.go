@@ -4,9 +4,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"https://github.com/go-ole/go-ole"
 )
 
-func GetSymlinkPath() string {
+func GetShortcutPath() string {
 	// Get user's home dir to enable autostart
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -17,10 +19,32 @@ func GetSymlinkPath() string {
 	return homeDir + `\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\` + filename
 }
 
+func CreateShortcut(src, dst string) error {
+	ole.CoInitializeEx(0, ole.COINIT_APARTMENTTHREADED|ole.COINIT_SPEED_OVER_MEMORY)
+	oleShellObject, err := oleutil.CreateObject("WScript.Shell")
+	if err != nil {
+		return err
+	}
+	defer oleShellObject.Release()
+	wshell, err := oleShellObject.QueryInterface(ole.IID_IDispatch)
+	if err != nil {
+		return err
+	}
+	defer wshell.Release()
+	cs, err := oleutil.CallMethod(wshell, "CreateShortcut", dst)
+	if err != nil {
+		return err
+	}
+	idispatch := cs.ToIDispatch()
+	oleutil.PutProperty(idispatch, "TargetPath", src)
+	oleutil.CallMethod(idispatch, "Save")
+	return nil
+}
+
 // CheckAutostart checks if the application is already added to autostart
 func CheckAutostart() bool {
 	// Get the path to the current executable
-	_, err := os.Stat(GetSymlinkPath())
+	_, err := os.Stat(GetShortcutPath())
 	return !os.IsNotExist(err)
 }
 
@@ -40,19 +64,19 @@ func AddAutostart() {
 		return
 	}
 
-	os.Symlink(realPath, GetSymlinkPath())
+	CreateShortcut(realPath, GetShortcutPath())
 	log.Println("Autostart entry added successfully!")
 }
 
 // RemoveAutostart removes the application from autostart
 func RemoveAutostart() {
 	// Remove the symlink to executable to disable autostart
-	err := os.Remove(GetSymlinkPath())
+	err := os.Remove(GetShortcutPath())
 	if err != nil {
 		log.Println("Error deleting old symlink:", err)
 		return
 	}
-	
+
 	log.Println("Autostart entry removed successfully!")
 }
 

@@ -16,7 +16,25 @@ func GetShortcutPath() string {
 	}
 	filename := filepath.Base(os.Args[0])
 
-	return homeDir + `\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\` + filename
+	return filepath.Join(homeDir, `AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`, filename)
+}
+
+func GetRealPath() string {
+	// Get the path to the current executable
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Println("Error getting executable path:", err)
+		return ""
+	}
+
+	// Get through all symlinks to get real executable path
+	realPath, err := filepath.EvalSymlinks(exePath)
+	if err != nil {
+		log.Println("Error getting real executable path:", err)
+		return ""
+	}
+
+	return realPath
 }
 
 func CreateShortcut(src, dst string) error {
@@ -50,21 +68,7 @@ func CheckAutostart() bool {
 
 // AddAutostart adds the application to autostart
 func AddAutostart() {
-	// Get the path to the current executable
-	exePath, err := os.Executable()
-	if err != nil {
-		log.Println("Error getting executable path:", err)
-		return
-	}
-
-	// Get through all symlinks to get real executable path
-	realPath, err := filepath.EvalSymlinks(exePath)
-	if err != nil {
-		log.Println("Error getting real executable path:", err)
-		return
-	}
-
-	CreateShortcut(realPath, GetShortcutPath())
+	CreateShortcut(GetRealPath(), GetShortcutPath())
 	log.Println("Autostart entry added successfully!")
 }
 

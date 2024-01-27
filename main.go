@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 
 	"github.com/spf13/cast"
@@ -18,7 +19,8 @@ import (
 )
 
 func ChangeLogDestinationToFile() {
-	f, err := os.OpenFile("npc.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
+	path := filepath.Base(gui.GetRealPath()) // gui??
+	f, err := os.OpenFile(filepath.Join(path, "npc.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}

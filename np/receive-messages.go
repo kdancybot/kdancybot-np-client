@@ -3,7 +3,9 @@ package np
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/gorilla/websocket"
 )
@@ -59,13 +61,33 @@ func SetDefaultValuesToConfiguration(config *Config) {
 	}
 }
 
+func GetRealPath() string {
+	// Get the path to the current executable
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Println("Error getting executable path:", err)
+		return ""
+	}
+
+	// Get through all symlinks to get real executable path
+	realPath, err := filepath.EvalSymlinks(exePath)
+	if err != nil {
+		log.Println("Error getting real executable path:", err)
+		return ""
+	}
+
+	return realPath
+}
+
 func LoadConfiguration(file string) (Config, error) {
 	var config Config
-	configFile, err := os.Open(file)
-	defer configFile.Close()
+
+	path := filepath.Base(GetRealPath())
+	configFile, err := os.Open(filepath.Join(path, file))
 	if err != nil {
 		return config, err
 	}
+	defer configFile.Close()
 	jsonParser := json.NewDecoder(configFile)
 	err = jsonParser.Decode(&config)
 	SetDefaultValuesToConfiguration(&config)

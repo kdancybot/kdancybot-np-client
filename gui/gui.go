@@ -2,7 +2,6 @@ package gui
 
 import (
 	_ "embed"
-	"log"
 
 	"github.com/getlantern/systray"
 )
@@ -37,7 +36,7 @@ func onReady() {
 	// icon, _ := os.ReadFile("icon.ico")
 	systray.SetTemplateIcon(icon, icon)
 	systray.SetTitle("kdancybot")
-	mAutostart := systray.AddMenuItem("Add to autostart", "")
+	mAutostart := systray.AddMenuItem(getAutostartButtonTitle(), "")
 	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
 	go func() {
 		for {
@@ -51,6 +50,14 @@ func onReady() {
 	}()
 }
 
+func getAutostartButtonTitle() string {
+	if CheckAutostart() {
+		return "Remove from autostart"
+	} else {
+		return "Add to autostart"
+	}
+}
+
 // func startGosumemory() {
 // 	log.Printf("started idk lol")
 // 	// cmd := exec.Command("./gosumemory-no-window.exe")
@@ -60,7 +67,11 @@ func onReady() {
 // }
 
 func addToAutostart() {
-	log.Printf("started idk lol")
+	if CheckAutostart() {
+		RemoveAutostart()
+	} else {
+		AddAutostart()
+	}
 	// cmd := exec.Command("./gosumemory-no-window.exe")
 	// if err := cmd.Run(); err != nil {
 	// 	log.Fatal(err)

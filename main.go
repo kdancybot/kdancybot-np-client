@@ -66,6 +66,4 @@ func main() {
 	go np.WsConnectionHandler()
 
 	gui.Start()
-	for {
-	}
 }

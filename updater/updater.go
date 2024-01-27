@@ -11,7 +11,7 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-const version = "1.3.9"
+const version = "0.1.0"
 
 // DoSelfUpdate updates the application
 func DoSelfUpdate() {
@@ -21,7 +21,7 @@ func DoSelfUpdate() {
 		log.Fatalln(err)
 	}
 	v := semver.MustParse(version)
-	latest, err := selfupdate.UpdateSelf(v, "kdancybot/gosumemory")
+	latest, err := selfupdate.UpdateSelf(v, "kdancybot/np-manager")
 	if err != nil {
 		log.Println("Binary update failed:", err)
 		return

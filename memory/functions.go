@@ -60,13 +60,21 @@ func Init() {
 		if procerr != nil {
 			DynamicAddresses.IsReady = false
 			for procerr != nil {
+				hasPrinted := false
 				allProcs, procerr = mem.FindProcess(osuProcessRegex, "osu!lazer", "osu!framework")
-				log.Println("It seems that we lost the process, retrying! ERROR:", procerr)
+				if !hasPrinted {
+					log.Println("It seems that we lost the process, retrying! ERROR:", procerr)
+					hasPrinted = true
+				}
 				time.Sleep(1 * time.Second)
 			}
 			err := initBase()
 			for err != nil {
-				log.Println("Failure mid getting offsets, retrying! ERROR:", err)
+				hasPrinted := false
+				if !hasPrinted {
+					log.Println("Failure mid getting offsets, retrying! ERROR:", err)
+					hasPrinted = true
+				}
 				err = initBase()
 				time.Sleep(1 * time.Second)
 			}
@@ -74,7 +82,11 @@ func Init() {
 		if DynamicAddresses.IsReady == false {
 			err := initBase()
 			for err != nil {
-				log.Println("Failure mid getting offsets, retrying! ERROR:", err)
+				hasPrinted := false
+				if !hasPrinted {
+					log.Println("Failure mid getting offsets, retrying! ERROR:", err)
+					hasPrinted = true
+				}
 				err = initBase()
 				time.Sleep(1 * time.Second)
 			}

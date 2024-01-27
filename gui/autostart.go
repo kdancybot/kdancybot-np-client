@@ -27,13 +27,22 @@ func GetRealPath() string {
 		log.Println("Error getting executable path:", err)
 		return ""
 	}
+	log.Println(exePath)
+
+	absolutePath, err := filepath.Abs(exePath)
+	if err != nil {
+		log.Println("Error getting executable path:", err)
+		return ""
+	}
+	log.Println(absolutePath)
 
 	// Get through all symlinks to get real executable path
-	realPath, err := filepath.EvalSymlinks(exePath)
+	realPath, err := filepath.EvalSymlinks(absolutePath)
 	if err != nil {
 		log.Println("Error getting real executable path:", err)
 		return ""
 	}
+	log.Println(realPath)
 
 	return realPath
 }

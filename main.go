@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"os"
-	"path/filepath"
 	"runtime"
 
 	"github.com/spf13/cast"
@@ -15,12 +14,11 @@ import (
 	"github.com/kdancybot/np-manager/mem"
 	"github.com/kdancybot/np-manager/memory"
 	"github.com/kdancybot/np-manager/np"
-	"github.com/kdancybot/np-manager/updater"
+//	"github.com/kdancybot/np-manager/updater"
 )
 
 func ChangeLogDestinationToFile() {
-	path := filepath.Base(gui.GetRealPath()) // gui??
-	f, err := os.OpenFile(filepath.Join(path, "npc.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
+	f, err := os.OpenFile("npc.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
@@ -34,7 +32,7 @@ func main() {
 	ChangeLogDestinationToFile()
 	config.Init()
 	updateTimeFlag := flag.Int("update", cast.ToInt(config.Config["update"]), "How fast should we update the values? (in milliseconds)")
-	shouldWeUpdate := flag.Bool("autoupdate", true, "Should we auto update the application?")
+//	shouldWeUpdate := flag.Bool("autoupdate", true, "Should we auto update the application?")
 	isRunningInWINE := flag.Bool("wine", cast.ToBool(config.Config["wine"]), "Running under WINE?")
 	songsFolderFlag := flag.String("path", config.Config["path"], `Path to osu! Songs directory ex: /mnt/ps3drive/osu\!/Songs`)
 	memDebugFlag := flag.Bool("memdebug", cast.ToBool(config.Config["memdebug"]), `Enable verbose memory debugging?`)
@@ -53,9 +51,9 @@ func main() {
 			log.Fatalln(`Specified Songs directory does not exist on the system! (try setting to "auto" if you are on Windows or make sure that the path is correct)`)
 		}
 	}
-	if *shouldWeUpdate {
-		updater.DoSelfUpdate()
-	}
+//	if *shouldWeUpdate {
+//		updater.DoSelfUpdate()
+//	}
 
 	go memory.Init()
 	// err := db.InitDB()

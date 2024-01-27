@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/go-ole/go-ole"
+	"github.com/go-ole/go-ole/oleutil"
 )
 
 func GetShortcutPath() string {

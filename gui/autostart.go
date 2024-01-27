@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"https://github.com/go-ole/go-ole"
+	"github.com/go-ole/go-ole"
 )
 
 func GetShortcutPath() string {
@@ -73,7 +73,7 @@ func RemoveAutostart() {
 	// Remove the symlink to executable to disable autostart
 	err := os.Remove(GetShortcutPath())
 	if err != nil {
-		log.Println("Error deleting old symlink:", err)
+		log.Println("Error deleting old shortcut:", err)
 		return
 	}
 

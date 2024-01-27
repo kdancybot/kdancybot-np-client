@@ -2,6 +2,7 @@ package gui
 
 import (
 	_ "embed"
+	"os"
 
 	"github.com/getlantern/systray"
 )
@@ -45,6 +46,7 @@ func onReady() {
 				addToAutostart()
 			case <-mQuit.ClickedCh:
 				systray.Quit()
+				os.Exit(0)
 			}
 		}
 	}()

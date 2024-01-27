@@ -4,7 +4,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/emersion/go-autostart"
 )
+
+var app *autostart.App
 
 func GetShortcutPath() string {
 	// Get user's home dir to enable autostart
@@ -46,22 +50,13 @@ func GetRealPath() string {
 
 // CheckAutostart checks if the application is already added to autostart
 func CheckAutostart() bool {
-	// Get the path to the current executable
-	path, _, err := shortcut.Read(GetShortcutPath())
-	if err != nil {
-		log.Println("Failed to find autostart entry:", err)
-		return false
-	}
-	return true
-
-	// _, err := os.Stat(GetShortcutPath())
-	// return !os.IsNotExist(err)
+	return app.IsEnabled()
 }
 
 // AddAutostart adds the application to autostart
 func AddAutostart() {
-	if err := shortcut.Make(GetRealPath(), GetShortcutPath(), ""); err != nil {
-		log.Println("Failed to create autostart entry:", err)
+	if err := app.Enable(); err != nil {
+		log.Fatal("Failed to add autostart entry:", err)
 		return
 	}
 	log.Println("Autostart entry added successfully!")
@@ -69,22 +64,8 @@ func AddAutostart() {
 
 // RemoveAutostart removes the application from autostart
 func RemoveAutostart() {
-	// Remove the symlink to executable to disable autostart
-	err := os.Remove(GetShortcutPath())
-	if err != nil {
-		log.Println("Error deleting old shortcut:", err)
-		return
+	if err := app.Disable(); err != nil {
+		log.Fatal("Failed to remove autostart entry:", err)
 	}
-
 	log.Println("Autostart entry removed successfully!")
 }
-
-// func main() {
-//     if CheckAutostart() {
-//         log.Println("Application is already added to autostart.")
-//         // You can uncomment the line below to remove the application from autostart
-//         // RemoveAutostart()
-//     } else {
-//         AddAutostart()
-//     }
-// }

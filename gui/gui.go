@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"os"
 
+	"github.com/emersion/go-autostart"
 	"github.com/getlantern/systray"
 )
 
@@ -12,24 +13,14 @@ import (
 //go:embed icon.ico
 var icon []byte
 
-// func handleRunningOsu() {
-// 	var isRunningNow bool
-// 	var cmds []exec.Cmd
-// 	isRunningBefore := false
-// 	for {
-// 		isRunningNow = checkOsu()
-// 		if isRunningBefore != isRunningNow {
-// 			if isRunningNow {
-// 				cmds = runNPClient()
-// 			} else {
-// 				stopNPClient(cmds)
-// 			}
-// 		}
-// 		isRunningBefore = isRunningNow
-// 	}
-// }
+var app *autostart.App
 
 func Start() {
+	app := &autostart.App{
+		Name:        "kdancybot",
+		DisplayName: "NPClient",
+		Exec:        []string{GetRealPath()},
+	}
 	systray.Run(onReady, nil)
 }
 

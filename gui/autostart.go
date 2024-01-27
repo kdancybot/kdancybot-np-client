@@ -4,9 +4,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/go-ole/go-ole"
-	"github.com/go-ole/go-ole/oleutil"
 )
 
 func GetShortcutPath() string {
@@ -47,38 +44,26 @@ func GetRealPath() string {
 	return realPath
 }
 
-func CreateShortcut(src, dst string) error {
-	ole.CoInitializeEx(0, ole.COINIT_APARTMENTTHREADED|ole.COINIT_SPEED_OVER_MEMORY)
-	oleShellObject, err := oleutil.CreateObject("WScript.Shell")
-	if err != nil {
-		return err
-	}
-	defer oleShellObject.Release()
-	wshell, err := oleShellObject.QueryInterface(ole.IID_IDispatch)
-	if err != nil {
-		return err
-	}
-	defer wshell.Release()
-	cs, err := oleutil.CallMethod(wshell, "CreateShortcut", dst)
-	if err != nil {
-		return err
-	}
-	idispatch := cs.ToIDispatch()
-	oleutil.PutProperty(idispatch, "TargetPath", src)
-	oleutil.CallMethod(idispatch, "Save")
-	return nil
-}
-
 // CheckAutostart checks if the application is already added to autostart
 func CheckAutostart() bool {
 	// Get the path to the current executable
-	_, err := os.Stat(GetShortcutPath())
-	return !os.IsNotExist(err)
+	path, _, err := shortcut.Read(GetShortcutPath())
+	if err != nil {
+		log.Println("Failed to find autostart entry:", err)
+		return false
+	}
+	return true
+
+	// _, err := os.Stat(GetShortcutPath())
+	// return !os.IsNotExist(err)
 }
 
 // AddAutostart adds the application to autostart
 func AddAutostart() {
-	CreateShortcut(GetRealPath(), GetShortcutPath())
+	if err := shortcut.Make(GetRealPath(), GetShortcutPath(), ""); err != nil {
+		log.Println("Failed to create autostart entry:", err)
+		return
+	}
 	log.Println("Autostart entry added successfully!")
 }
 

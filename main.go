@@ -1,61 +1,60 @@
 package main
 
 import (
-    "log"
-    "os"
-    "encoding/json"
-    "net/url"
-    "time"
-    "strings"
+	"flag"
+	"log"
+	"os"
+	"runtime"
+
+	"github.com/spf13/cast"
+
+	"github.com/kdancybot/np-client/config"
+
+	"github.com/kdancybot/np-client/gui"
+	"github.com/kdancybot/np-client/mem"
+	"github.com/kdancybot/np-client/memory"
+	"github.com/kdancybot/np-client/np"
+	"github.com/kdancybot/np-client/updater"
 )
 
 func ChangeLogDestinationToFile() {
-	f, err := os.OpenFile("client.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0664)
+	f, err := os.OpenFile(np.GetLocalPath("npclient.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
 	log.SetOutput(f)
-	
-	// Not explicitly closing file is bad, 
-	// but it shouldn't become a problem with only one config file opened
 }
 
 func main() {
 	ChangeLogDestinationToFile()
-    SelfUpdate()
+	config.Init()
+	updateTimeFlag := flag.Int("update", cast.ToInt(config.Config["update"]), "How fast should we update the values? (in milliseconds)")
+	shouldWeUpdate := flag.Bool("autoupdate", true, "Should we auto update the application?")
+	isRunningInWINE := flag.Bool("wine", cast.ToBool(config.Config["wine"]), "Running under WINE?")
+	songsFolderFlag := flag.String("path", config.Config["path"], `Path to osu! Songs directory ex: /mnt/ps3drive/osu\!/Songs`)
+	memDebugFlag := flag.Bool("memdebug", cast.ToBool(config.Config["memdebug"]), `Enable verbose memory debugging?`)
+	memCycleTestFlag := flag.Bool("memcycletest", cast.ToBool(config.Config["memcycletest"]), `Enable memory cycle time measure?`)
+	flag.Parse()
+	mem.Debug = *memDebugFlag
+	memory.MemCycle = *memCycleTestFlag
+	memory.UpdateTime = *updateTimeFlag
+	memory.SongsFolderPath = *songsFolderFlag
+	memory.UnderWine = *isRunningInWINE
+	if runtime.GOOS != "windows" && memory.SongsFolderPath == "auto" {
+		log.Fatalln("Please specify path to osu!Songs (see --help)")
+	}
+	if memory.SongsFolderPath != "auto" {
+		if _, err := os.Stat(memory.SongsFolderPath); os.IsNotExist(err) {
+			log.Fatalln(`Specified Songs directory does not exist on the system! (try setting to "auto" if you are on Windows or make sure that the path is correct)`)
+		}
+	}
+	if *shouldWeUpdate {
+		updater.DoSelfUpdate()
+	}
 
-    config, err := LoadConfiguration("config.txt")
-    if err != nil {
-        log.Fatal("Error reading config file:", err)
-        return
-    }
-    
-    // Parse the server URL
-    u, err := url.Parse(config.Host)
-    if err != nil {
-        log.Fatal("Error parsing server URL:", err)
-        return
-    }
+	go memory.Init()
+	go np.SetupStructure()
+	go np.WsConnectionHandler()
 
-    // Define your authentication payload (username and password)
-    credentials, err := json.Marshal(config.Credentials)
-    if err != nil {
-        log.Fatal("Error marshalling credentials:", err)
-        return
-    }
-
-    osu_urls := []string{config.StreamCompanionURL, config.GosumemoryURL}
-
-    seconds_wait := 5 // This is fine until I implement good reconnection tactic
-    for true {
-        err = connection_handler(u.String(), osu_urls, credentials)
-        log.Printf("Error happened during connection handling: %s", err)
-        if (strings.HasPrefix(err.Error(), "auth:")) {
-            log.Printf("Exiting...")
-            return
-        }
-        log.Printf("Reconnecting in %d %s", seconds_wait, "seconds")
-        time.Sleep(time.Duration(seconds_wait) * time.Second)
-        // seconds_wait *= 2
-    }
+	gui.Start()
 }

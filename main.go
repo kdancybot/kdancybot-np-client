@@ -8,31 +8,28 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/kdancybot/np-manager/config"
+	"github.com/kdancybot/np-client/config"
 
-	"github.com/kdancybot/np-manager/gui"
-	"github.com/kdancybot/np-manager/mem"
-	"github.com/kdancybot/np-manager/memory"
-	"github.com/kdancybot/np-manager/np"
-//	"github.com/kdancybot/np-manager/updater"
+	"github.com/kdancybot/np-client/gui"
+	"github.com/kdancybot/np-client/mem"
+	"github.com/kdancybot/np-client/memory"
+	"github.com/kdancybot/np-client/np"
+	"github.com/kdancybot/np-client/updater"
 )
 
 func ChangeLogDestinationToFile() {
-	f, err := os.OpenFile(np.GetLocalPath("npc.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
+	f, err := os.OpenFile(np.GetLocalPath("npclient.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
 	log.SetOutput(f)
-
-	// Not explicitly closing file is bad,
-	// but it shouldn't become a problem with only one config file opened
 }
 
 func main() {
 	ChangeLogDestinationToFile()
 	config.Init()
 	updateTimeFlag := flag.Int("update", cast.ToInt(config.Config["update"]), "How fast should we update the values? (in milliseconds)")
-//	shouldWeUpdate := flag.Bool("autoupdate", true, "Should we auto update the application?")
+	shouldWeUpdate := flag.Bool("autoupdate", true, "Should we auto update the application?")
 	isRunningInWINE := flag.Bool("wine", cast.ToBool(config.Config["wine"]), "Running under WINE?")
 	songsFolderFlag := flag.String("path", config.Config["path"], `Path to osu! Songs directory ex: /mnt/ps3drive/osu\!/Songs`)
 	memDebugFlag := flag.Bool("memdebug", cast.ToBool(config.Config["memdebug"]), `Enable verbose memory debugging?`)
@@ -51,17 +48,11 @@ func main() {
 			log.Fatalln(`Specified Songs directory does not exist on the system! (try setting to "auto" if you are on Windows or make sure that the path is correct)`)
 		}
 	}
-//	if *shouldWeUpdate {
-//		updater.DoSelfUpdate()
-//	}
+	if *shouldWeUpdate {
+		updater.DoSelfUpdate()
+	}
 
 	go memory.Init()
-	// err := db.InitDB()
-	// if err != nil {
-	// 	log.Println(err)
-	// 	time.Sleep(5 * time.Second)
-	// 	os.Exit(1)
-	// }
 	go np.SetupStructure()
 	go np.WsConnectionHandler()
 

@@ -35,7 +35,7 @@ wine = false
 serverip = 127.0.0.1:24050
 cors = false
 		
-[GameOverlay] ; https://github.com/kdancybot/np-manager/wiki/GameOverlay
+[GameOverlay] ; https://github.com/kdancybot/np-client/wiki/GameOverlay
 enabled = false
 gameWidth = 1920
 gameHeight = 1080
@@ -66,7 +66,7 @@ overlayScale = 10
 		if err != nil {
 			panic(err)
 		}
-		_, err = file.WriteString(fmt.Sprintf("\n[GameOverlay]; https://github.com/kdancybot/np-manager/wiki/GameOverlay\nenabled = false\ngameWidth = 1920\ngameHeight = 1080\noverlayURL = http://localhost:24050/InGame2\noverlayWidth = 380\noverlayHeight = 110\noverlayOffsetX = 0\noverlayOffsetY = 0\noverlayScale = 10"))
+		_, err = file.WriteString(fmt.Sprintf("\n[GameOverlay]; https://github.com/kdancybot/np-client/wiki/GameOverlay\nenabled = false\ngameWidth = 1920\ngameHeight = 1080\noverlayURL = http://localhost:24050/InGame2\noverlayWidth = 380\noverlayHeight = 110\noverlayOffsetX = 0\noverlayOffsetY = 0\noverlayScale = 10"))
 		if err != nil {
 			panic(err)
 		}

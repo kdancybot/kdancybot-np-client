@@ -47,7 +47,7 @@ func Injct(pid int) error {
 	if err != nil {
 		return err
 	}
-	log.Println("[GAMEOVERLAY] Initialized successfully, see https://github.com/kdancybot/np-manager/wiki/GameOverlay for tutorial")
+	log.Println("[GAMEOVERLAY] Initialized successfully, see https://github.com/kdancybot/np-client/wiki/GameOverlay for tutorial")
 	return nil
 }
 

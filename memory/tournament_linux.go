@@ -6,7 +6,7 @@ package memory
 import (
 	"errors"
 
-	"github.com/kdancybot/np-manager/mem"
+	"github.com/kdancybot/np-client/mem"
 )
 
 func resolveTourneyClients(procs []mem.Process) ([]mem.Process, error) {

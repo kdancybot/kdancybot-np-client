@@ -1,10 +1,11 @@
-module github.com/kdancybot/np-manager
+module github.com/kdancybot/np-client
 
 go 1.18
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/elastic/go-windows v1.0.1
+	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
 	github.com/getlantern/systray v1.2.2
 	github.com/gorilla/websocket v1.5.1
 	github.com/k0kubun/pp v3.0.1+incompatible

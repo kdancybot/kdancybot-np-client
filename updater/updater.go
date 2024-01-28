@@ -21,7 +21,7 @@ func DoSelfUpdate() {
 		log.Fatalln(err)
 	}
 	v := semver.MustParse(version)
-	latest, err := selfupdate.UpdateSelf(v, "kdancybot/np-manager")
+	latest, err := selfupdate.UpdateSelf(v, "kdancybot/np-client")
 	if err != nil {
 		log.Println("Binary update failed:", err)
 		return

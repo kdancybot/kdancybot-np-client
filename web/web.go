@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/kdancybot/np-manager/config"
-	"github.com/kdancybot/np-manager/memory"
+	"github.com/kdancybot/np-client/config"
+	"github.com/kdancybot/np-client/memory"
 	"github.com/spf13/cast"
 )
 

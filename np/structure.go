@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/k0kubun/pp"
-	"github.com/kdancybot/np-manager/memory"
+	"github.com/kdancybot/np-client/memory"
 )
 
 // SetupStructure sets up ws and json output

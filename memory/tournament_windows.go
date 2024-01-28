@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kdancybot/np-manager/mem"
+	"github.com/kdancybot/np-client/mem"
 	"github.com/spf13/cast"
 )
 

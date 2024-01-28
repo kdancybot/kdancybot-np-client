@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/k0kubun/pp"
-	"github.com/kdancybot/np-manager/mem"
+	"github.com/kdancybot/np-client/mem"
 )
 
 func modsResolver(xor uint32) string {

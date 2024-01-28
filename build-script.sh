@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
-target=kdancybot-np-client
-	
-platforms=("windows/amd64" "windows/386" "linux/amd64" "linux/386")
+target=np-manager
+
+# # Since go doesn't support cross-compiling of C code (for obvious reasons)
+# # you can just comment out all unsupported platforms for yourself
+# # (I may or may not write better script later)	
+# ^ With removal of Cgo parts of project this comment is obsolete 
+platforms=(
+	"linux/amd64" "linux/386"
+	"windows/amd64" "windows/386"
+)
 
 mkdir -p build
 
@@ -18,7 +25,7 @@ do
 		flags+="-ldflags -H=windowsgui"
 	fi	
 	
-	env GOOS=$GOOS GOARCH=$GOARCH go build $flags -o build/$output_name
+	GOOS=$GOOS GOARCH=$GOARCH go build $flags -o build/$output_name
 	if [ $? -ne 0 ]; then
    		echo 'An error has occurred! Aborting the script execution...'
 		exit 1

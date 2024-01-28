@@ -3,9 +3,12 @@ package np
 import (
 	"encoding/json"
 	"fmt"
-//	"log"
+	"log"
+	"path/filepath"
+
+	//	"log"
 	"os"
-//	"path/filepath"
+	//	"path/filepath"
 
 	"github.com/gorilla/websocket"
 )
@@ -61,10 +64,38 @@ func SetDefaultValuesToConfiguration(config *Config) {
 	}
 }
 
+func GetLocalPath(file string) string {
+	// Get the path to the current executable
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Println("Error getting executable path:", err)
+		return ""
+	}
+	log.Println(exePath)
+
+	absolutePath, err := filepath.Abs(exePath)
+	if err != nil {
+		log.Println("Error getting executable path:", err)
+		return ""
+	}
+	log.Println(absolutePath)
+
+	// Get through all symlinks to get real executable path
+	realPath, err := filepath.EvalSymlinks(absolutePath)
+	if err != nil {
+		log.Println("Error getting real executable path:", err)
+		return ""
+	}
+	log.Println(realPath)
+
+	pathToFile := filepath.Join(filepath.Dir(realPath), file)
+	return pathToFile
+}
+
 func LoadConfiguration(file string) (Config, error) {
 	var config Config
 
-	configFile, err := os.Open(file)
+	configFile, err := os.Open(GetLocalPath(file))
 	if err != nil {
 		return config, err
 	}

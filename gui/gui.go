@@ -28,6 +28,7 @@ func onReady() {
 			select {
 			case <-mAutostart.ClickedCh:
 				addToAutostart()
+				mAutostart.SetTitle(getAutostartButtonTitle())
 			case <-mQuit.ClickedCh:
 				systray.Quit()
 				os.Exit(0)
@@ -44,22 +45,10 @@ func getAutostartButtonTitle() string {
 	}
 }
 
-// func startGosumemory() {
-// 	log.Printf("started idk lol")
-// 	// cmd := exec.Command("./gosumemory-no-window.exe")
-// 	// if err := cmd.Run(); err != nil {
-// 	// 	log.Fatal(err)
-// 	// }
-// }
-
 func addToAutostart() {
 	if CheckAutostart() {
 		RemoveAutostart()
 	} else {
 		AddAutostart()
 	}
-	// cmd := exec.Command("./gosumemory-no-window.exe")
-	// if err := cmd.Run(); err != nil {
-	// 	log.Fatal(err)
-	// }
 }

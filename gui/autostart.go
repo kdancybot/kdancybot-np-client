@@ -12,10 +12,10 @@ var app *autostart.App
 
 func SetUpApp() {
 	app = &autostart.App{
-		Name:        "kdancybot",
-                DisplayName: "NPClient",
-                Exec:        []string{GetRealPath()},
-        }
+		Name:        "NPClient",
+		DisplayName: "NPClient",
+		Exec:        []string{GetRealPath()},
+	}
 }
 
 func GetShortcutPath() string {

@@ -18,7 +18,7 @@ import (
 )
 
 func ChangeLogDestinationToFile() {
-	f, err := os.OpenFile("npc.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
+	f, err := os.OpenFile(np.GetLocalPath("npc.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
